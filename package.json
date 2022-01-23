@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dev": "nodemon -w src/input.md  src/core/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
