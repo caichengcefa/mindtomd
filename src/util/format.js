@@ -73,14 +73,14 @@ function formatContent(text, useList = true) {
             let num = 0
             res = res.map((item) => {
                 if (item.indexOf(listFlag) !== -1){
-                    return item.replace(listFlagReg,($0,$1) => `**${++num}、 `+$1+'**')
+                    return item.replace(listFlagReg,($0,$1) => `**${++num}、 `+$1.trim()+'**')
                 }
                 return item
             }).join('')
         }else {
             res = res.map((item) => {
                 if (item.indexOf(listFlag) !== -1){
-                    return item.replace(listFlagReg,($0,$1) => '**'+$1+'**')
+                    return item.replace(listFlagReg,($0,$1) => '**'+$1.trim()+'**')
                 }
                 return item
             }).join('')
