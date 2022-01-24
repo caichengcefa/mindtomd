@@ -1,6 +1,3 @@
-
-const fs = require('fs')
-
 const {
   levelFlag,
   contentFlag,
@@ -63,7 +60,6 @@ function genNode(text, level, addFlag = false){
 
 function genContent(){
   if (textContent.length){
-    console.log('textContent',JSON.stringify(textContent))
     output += formatContent(textContent, singleLineCount >= 2)
   }
   textContent = ''
@@ -83,7 +79,7 @@ function parseTitleContent(source, level = 1) {
     if (!item.trim().length) {
       continue
     }
-    console.log('item',JSON.stringify(item))
+    // console.log('item',JSON.stringify(item))
 
     if (level === 1) {
       //maybe content or title

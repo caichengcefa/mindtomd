@@ -5,7 +5,9 @@ const {
     listFlag,
     hasCNChar,
     hasNewLine,
-    wordChar
+    wordReg,
+    urlReg
+
 } = require('./index')
 
 const formatCodeBlock = (text) => {
@@ -44,8 +46,8 @@ function formatNode(text) {
           //单换行，前后文，链接
         .replace(/[^\n]\n[^\n]/g,($0) => $0.replace('\n','，'))
         //单词高亮
-        .replace(wordChar, ($0,$1,$2,$3) => {
-            let res = formatHighlight($2)
+        .replace(wordReg, ($0,$1,$2,$3) => {
+            let res = urlReg.test($2)?$2:formatHighlight($2)
             if ($1){
                 res = $1+' '+res
             }
@@ -67,21 +69,20 @@ function formatNode(text) {
 function formatContent(text, useList = true) {
     let res = text
     if (res.length){
+        const listFlagReg = new RegExp(`${listFlag}([\\s\\S]*?)${listFlag}`)
         res = res.split(contentFlag).filter(item => item.trim().length)
-
         if (useList){
             let num = 0
-            const listFlagReg = new RegExp(`${listFlag}([\\s\\S]*?)${listFlag}`)
             res = res.map((item) => {
                 if (item.indexOf(listFlag) !== -1){
-                    return item.replace(listFlagReg,($0,$1) => `${++num}、 `+$1)
+                    return item.replace(listFlagReg,($0,$1) => `**${++num}、 `+$1+'**')
                 }
                 return item
             }).join('')
         }else {
             res = res.map((item) => {
                 if (item.indexOf(listFlag) !== -1){
-                    return item.replace(listFlag,'**')
+                    return item.replace(listFlagReg,($0,$1) => '**'+$1+'**')
                 }
                 return item
             }).join('')

@@ -5,7 +5,8 @@ const listFlag = `__list_flag__`
 
 const hasCNChar = /[\u4e00-\u9fa5]/
 const hasNewLine = /\n/
-const wordChar = /([\u4e00-\u9fa5])?(\w[\w ]+)([\u4e00-\u9fa5])?/g
+const wordReg = /([\u4e00-\u9fa5])?([-A-Za-z0-9+&@#/%?=~_|!:,.;* ]+)([\u4e00-\u9fa5])?/g
+const urlReg = /(https?|ftp|file):\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
 
 module.exports = {
     levelFlag,
@@ -13,5 +14,6 @@ module.exports = {
     listFlag,
     hasCNChar,
     hasNewLine,
-    wordChar,
+    wordReg,
+    urlReg
 }
