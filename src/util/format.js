@@ -59,8 +59,6 @@ function formatNode(text) {
     }else {//en
         if (res.length > 50 || hasNewLine.test(res)){//add code block
             res = formatCodeBlock(res)
-        }else {
-            res = formatHighlight(res)
         }
     }
     return res
