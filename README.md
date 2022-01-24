@@ -6,6 +6,7 @@ const a = '1'
 测`高亮是试 `高亮是` aa,
 
 
+**fc** **测试**
 ```ts
 const a = 'test'
 
