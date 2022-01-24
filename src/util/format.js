@@ -2,6 +2,7 @@
 const {
     levelFlag,
     contentFlag,
+    listFlag,
     hasCNChar,
     hasNewLine,
     wordChar
@@ -35,7 +36,15 @@ const formatListItem = (text) => {
 function formatNode(text) {
     let res = text.trim()
     if (hasCNChar.test(res)){//zh
-        res = res.replace(wordChar, ($0,$1,$2,$3) => {
+        res = res
+          //改为全角，
+          .replace(',','，')
+          //单换行+, 改为，
+        .replace(/，\n，|\n，|，\n/,'，')
+          //单换行，前后文，链接
+        .replace(/[^\n]\n[^\n]/g,($0) => $0.replace('\n','，'))
+        //单词高亮
+        .replace(wordChar, ($0,$1,$2,$3) => {
             let res = formatHighlight($2)
             if ($1){
                 res = $1+' '+res
@@ -55,35 +64,26 @@ function formatNode(text) {
     return res
 }
 
-function formatContent(text) {
-    let res = text.trim()
+function formatContent(text, useList = true) {
+    let res = text
     if (res.length){
         res = res.split(contentFlag).filter(item => item.trim().length)
 
-        let count = 0
-        const useList = res.some(item => {
-            if (!hasNewLine.test(item)){
-                count += 1
-            }
-            return count >= 2
-        })
-
         if (useList){
             let num = 0
-            res = res.map((item,index) => {
-                if (!hasNewLine.test(item)){
-                    return `${++num}、 `+item+'\n\n'
-                }else {
-                    return item+'\n'
+            const listFlagReg = new RegExp(`${listFlag}([\\s\\S]*?)${listFlag}`)
+            res = res.map((item) => {
+                if (item.indexOf(listFlag) !== -1){
+                    return item.replace(listFlagReg,($0,$1) => `${++num}、 `+$1)
                 }
+                return item
             }).join('')
         }else {
-            res = res.map((item,index) => {
-                if (!hasNewLine.test(item)){
-                    return '**'+item+'**\n\n'
-                }else {
-                    return item+`\n`
+            res = res.map((item) => {
+                if (item.indexOf(listFlag) !== -1){
+                    return item.replace(listFlag,'**')
                 }
+                return item
             }).join('')
         }
     }

@@ -4,6 +4,7 @@ const fs = require('fs')
 const {
   levelFlag,
   contentFlag,
+  listFlag,
   hasNewLine,
 } = require('../util')
 const {formatNode, formatContent} = require('../util/format')
@@ -11,6 +12,7 @@ const {formatNode, formatContent} = require('../util/format')
 
 let output = ''
 let textContent = ''
+let singleLineCount = 0
 
 function transform(source) {
   if (typeof source !== 'string' && source.indexOf('\n\t') === -1){
@@ -19,6 +21,7 @@ function transform(source) {
 
   output = ''
   textContent = ''
+  singleLineCount = 0
   source = genTitle(source,0)
   parseTitleContent(source,1)
   return output
@@ -33,7 +36,7 @@ function genTitle(text, level){
   const match = new RegExp(`([\\s\\S]*?)(?:\\n\\t{${level+1}})|([\\s\\S]*?)$`).exec(text)
   if (match){
     const title = match[1] || match[2] || ''
-    output += title.length ? '#'.repeat(level+1)+' '+title+'\n\n': ''
+    output += title.length ? '\n'+'#'.repeat(level+1)+' '+title+'\n\n': ''
     return text.slice(title.length)
   }
   return text
@@ -43,8 +46,16 @@ function genNode(text, level, addFlag = false){
   const match = new RegExp(`([\\s\\S]*?)(?:\\n\\t{${level+1}})|([\\s\\S]*?)$`).exec(text)
   if (match){
     const node = match[1] || match[2] || ''
-    textContent += addFlag ? contentFlag  + formatNode(node):  formatNode(node) + '\n\n'
-
+    if (addFlag){
+      if (!hasNewLine.test(node)){
+        singleLineCount++
+        textContent += contentFlag + listFlag + node + listFlag + '\n\n'
+      }else {
+        textContent += contentFlag + formatNode(node) + '\n\n'
+      }
+    }else {
+      textContent += formatNode(node) + '\n\n'
+    }
     return text.slice(node.length)
   }
   return text
@@ -53,9 +64,10 @@ function genNode(text, level, addFlag = false){
 function genContent(){
   if (textContent.length){
     console.log('textContent',JSON.stringify(textContent))
-    output += formatContent(textContent)
+    output += formatContent(textContent, singleLineCount >= 2)
   }
   textContent = ''
+  singleLineCount = 0
 }
 
 function parseTitleContent(source, level = 1) {

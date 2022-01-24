@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "nodemon -w src/input.md  src/core/index.js"
+    "dev": "nodemon -w src/input.md  src/main.js"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
